@@ -87,6 +87,13 @@
 \newunicodechar{²}{\textsuperscript{2}}
 \newunicodechar{₁}{\textsubscript{1}}
 \newunicodechar{₂}{\textsubscript{2}}
+% superscripts/greek introduced by the cost-model coupling & RBC analyses
+\newunicodechar{⁰}{\textsuperscript{0}}
+\newunicodechar{⁴}{\textsuperscript{4}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
 
 % ---- hyperref ----
 \usepackage[unicode]{hyperref}
@@ -118,7 +125,11 @@ enforcement 机制与协调修复触发条件,而非 certified/uncertified
 这一浅层标签。该结论的或有负债侧已由真实 Sui n=7/n=4
 部署的受控故障注入(290+
 次重复)初步支持:故障代价确为非线性、由故障强度驱动的或有负债(详见
-§7.6.1)。
+§7.6.1)。须强调本文的部署组件定位为成本模型参数的\textbf{结构性标定}(structural
+calibration),而非两套独立协议的 benchmark
+比较:其 certified 对照臂由同一引擎上一个\textbf{可开关的代理认证}(proxy-certified
+toggle,以 2f+1 quorum 接受模拟认证,而非密码学 RBC)实现,故标定的是净优势的成本结构(Δ\_save、翻转频率 ρ*),而非真实 RBC 的绝对延迟;真实 RBC
+开销的解析外推见 §7.6.4,构念效度限定见 §9。
 
 \textbf{关键词}:区块链共识;DAG-based BFT;Reliable Broadcast;uncertified
 DAG;数据可用性;协议不变量;延迟分析
@@ -149,7 +160,16 @@ availability-enforcement mechanism and its reconciliation trigger, not
 the surface certified/uncertified label. This contingent-liability side
 is preliminarily supported by controlled fault-injection on a real Sui
 n=7/n=4 deployment (290+ repetitions): the fault-induced latency cost is
-a non-linear, fault-intensity-driven contingent liability.
+a non-linear, fault-intensity-driven contingent liability. We stress
+that the deployment component is positioned as a structural calibration
+of the cost-model parameters, not a benchmark of two independent
+protocols: its certified baseline is realized by a toggleable
+proxy-certified gate (an availability certificate accepting at a 2f+1
+quorum, not cryptographic RBC) on a single engine, so it calibrates the
+cost structure of the net advantage (Δ\_save and the crossover frequency
+ρ*) rather than the absolute latency of real RBC; an analytical
+extrapolation to real RBC cost is given in §7.6.4 and construct-validity
+limits in §9.
 
 \textbf{Keywords}: blockchain consensus; DAG-based BFT; Reliable
 Broadcast; uncertified DAG; data availability; protocol invariants;
@@ -197,7 +217,14 @@ uncertified DAG 上构建低延迟异步共识。
 主要通过去掉认证机制来``免费''降低延迟------少一轮
 RBC,即少一轮延迟。这一判断在直觉上极具说服力,也几乎成为该方向的共识性叙述。
 
-本文质疑这一判断,质疑的起点是一个方法论问题。本文记之为
+须澄清本文的批判对象与定位,以免被误读为攻击一个稻草人。本文并不主张协议设计社区\textbf{完全意识不到}去认证有代价------恰恰相反,从业者在非正式讨论中早已知道
+uncertified DAG 需要额外的可用性与恢复机制,Adelie {[}45{]}
+为其新攻击面专门设计检测与防护即是一例,Mysticeti {[}43{]}
+自身也讨论过认证的取舍。本文要做的不是``纠正一个错误的共识'',而是把这种\textbf{分散的、非正式的、随协议各异的}认识\textbf{系统化并加以扩展}:去认证的代价究竟落在哪一个不变量上?以何种成本结构(固定开销还是或有负债)出现?在何种网络与敌手条件下足以抵消良好情形的延迟优势?这些问题此前从未被作为一个\textbf{受控的分析对象}统一追问。换言之,本文把一个被
+benchmark
+叙述所遮蔽、半已知的取舍,提升为一个可分析、可证伪、且有部署锚点的框架------这正是其增量贡献所在。
+
+本文质疑``去认证免费降延迟''这一\textbf{结构性}表述,质疑的起点是一个方法论问题。本文记之为
 \textbf{SubRQ0:certified 与 uncertified DAG 的比较对象是否公平?}
 现有比较通常将某个 certified 协议(如 Bullshark {[}33{]})与某个
 uncertified 协议(如 Mysticeti
@@ -227,7 +254,10 @@ happy-path 附近的采样;certified 与 uncertified
 \textbf{availability-enforcement
 机制}(数据可用性以何种方式、在何时被强制)\textbf{与 reconciliation
 trigger 条件}(数据缺失时的协调修复以何种条件触发)。certified 与
-uncertified 只是这一深层轴上的两个投影点。
+uncertified
+只是这一深层轴上的两个投影点。第 8 章将进一步把贡献 C 的\textbf{可辩护内核}收窄为其中的
+reconciliation trigger
+维度,以及``延迟与鲁棒性是二维平面上可联合优化的目标,而非一维取舍''这一设计自由度------这正是不可被归为``对二分法的重命名''的部分。
 
 围绕这一论点,本文回答以下研究问题:
 
@@ -313,7 +343,9 @@ DAG-Rider {[}31{]}
 
 \subsection{2.7 研究空白}\label{ux7814ux7a76ux7a7aux767d}
 
-综观上述谱系,已有工作的主流范式是``提出一个新协议并报告其 benchmark''。即便是系统化综述 {[}57{]}--{[}60{]} 也主要在分类与梳理协议,而尚无工作把 certified/uncertified 之分本身当作分析对象、追问它是否遮蔽了一个更恰当的坐标并加以重构。Mysticeti {[}43{]}、Adelie {[}45{]} 等单个协议工作确实讨论过认证的取舍,但它们讨论的是``在这条轴上如何取值'',而非``这条轴本身是否是描述设计空间的恰当坐标''。本文要填补的正是后一种 reframing 的空白。
+综观上述谱系,已有工作的主流范式是``提出一个新协议并报告其 benchmark''。系统化综述虽已出现,但其分类坐标均非本文所关注的认证强度轴,值得逐一对照。Cachin 与 Vukolić 对实用 BFT 协议的早期梳理 {[}60{]} 以网络模型、容错门限与通信复杂度为骨架;Bano 等 {[}58{]} 以委员会形成机制与 Sybil 抗性来组织区块链共识谱系;Garay 与 Kiayias {[}59{]} 给出一个以网络/敌手假设与安全活性属性为维度的形式化共识分类法;而 Raikwar 等针对 DAG 共识的专门 SoK {[}57{]} 则按 DAG 的结构形态(结构化/非结构化)、轮与波的推进方式以及提交规则来归类协议。这四类分类法各有价值,却有一个共同点:它们都把 certified 与 uncertified 视为已有协议的\textbf{既定属性}加以登记和归类,而\textbf{没有一篇}把``certified/uncertified 这条分界线本身''当作分析对象、追问它是否遮蔽了一个更恰当的坐标。Mysticeti {[}43{]}、Adelie {[}45{]} 等单个协议工作确实讨论过认证的取舍,但它们讨论的是``在这条轴上如何取值'',而非``这条轴本身是否是描述设计空间的恰当坐标''。本文要填补的正是后一种 reframing 的空白------它与上述 SoK 是\textbf{正交而非竞争}的:本文不提出新的协议分类法,而是论证现有分类法所共同沿用的一条分界线(认证强度)只是一个更深层变量(availability-enforcement 时机与 reconciliation trigger,见第 8 章)的粗糙投影。
+
+须就语料库 C(§3.3.1)的样本范围作一诚实说明。本文的归纳样本止于 2024--2025 年间发表的七个协议;DAG-BFT 仍是一个快速演进的领域,持续涌现的新设计可按 C 的相同纳入标准(有公开安全性证明、有明确提交规则)被纳入并定位到第 8 章的深层轴上。本文不宣称已穷尽该设计空间,这一持续扩充属于未来工作(§10);但归纳样本的有限性不影响本文结论的内部效度------第 6 章命题 1 对``安全性证明依赖槽位唯一性''的协议类给出的是不依赖逐协议归纳的论证,而第 5 章的 ①/② 分类对 C 内每个协议均经 C1-C 双判据独立核验。
 
 \section{第 3 章
 方法论:不变量分解与受控比较框架}\label{ux7b2c-3-ux7ae0-ux65b9ux6cd5ux8bbaux4e0dux53d8ux91cfux5206ux89e3ux4e0eux53d7ux63a7ux6bd4ux8f83ux6846ux67b6}
@@ -349,6 +381,15 @@ minimal pair
 \subsubsection{3.3.1 语料库 C 的界定}\label{ux8bedux6599ux5e93-c-ux7684ux754cux5b9a}
 
 本文的归纳性分析建立在一个显式界定的协议语料库 C 之上。C 的纳入标准为:(i)以 DAG 为通信结构的 BFT 共识协议,(ii)有公开发表的安全性或活性证明(或等价的形式化论证),(iii)有明确的提交规则描述。据此,C 包含以下七个协议:DAG-Rider {[}31{]}、Narwhal/Tusk {[}32{]}、Bullshark {[}33{]}、Cordial Miners {[}42{]}、Mysticeti {[}43{]}、Mahi-Mahi {[}44{]}、Adelie {[}45{]}。其中前三个为 certified DAG,后四个为 uncertified DAG 或其变体。排除标准为:无安全性证明的原型系统、未发表的工作、以及非 DAG 结构的 BFT 协议(如 PBFT、HotStuff)。本文所有``语料库 C 中的协议均\ldots\ldots''形式的断言,均限定在上述七个协议之内。
+
+须坦承归纳样本之小及其多样性之低:C 中仅有四个 uncertified
+协议(Cordial Miners、Mysticeti、Mahi-Mahi、Adelie),且其中三个(Mysticeti、Mahi-Mahi、Adelie)出自相近的研究脉络------Mahi-Mahi
+与 Adelie 均构建于或紧邻 Mysticeti 的 uncertified
+结构。这意味着第 5 章对 uncertified 一侧的归纳结论(可用性落入 ②
+削弱+补偿)在统计意义上是一个\textbf{弱归纳}:它的外部效度不应依赖样本量,而依赖两道独立于样本量的支撑------第
+6 章命题 1 对非等价性给出的、不依赖逐协议归纳的论证,以及对 C
+中每个协议安全性/活性证明的逐一核验(C1-C
+双判据,见第 5 章)。扩大 uncertified 样本(纳入更多独立脉络的协议)以确认该归纳,是一项明确的未来工作(§10)。
 
 \subsection{3.4
 三分判据与成本-证明双判据}\label{ux4e09ux5206ux5224ux636eux4e0eux6210ux672c-ux8bc1ux660eux53ccux5224ux636e}
@@ -474,6 +515,10 @@ DAG''提升为``全局一致对象''的黏合剂。
 个正确进程已经持有该区块的内容,因而任何正确进程日后总能向它们索取并取得该内容
 {[}5{]}, {[}6{]}。
 
+须就术语作一消歧,以免与区块链可扩展性文献中的同名概念混淆。本文所称``数据可用性''是一个\textbf{共识层}性质------指被引用区块的内容\textbf{确实被足够多的诚实验证者持有},从而可在需要时被取得;它刻画的是``数据是否真的存在于网络中''这一物理事实。这与数据可用性采样(DAS)及欺诈/可用性证明
+{[}48{]} 文献中的``数据可用性''\textbf{不同}:后者关心的是\textbf{轻客户端}如何在不下载全量数据的前提下\textbf{验证}区块数据已被发布(经纠删码加随机抽样),其威胁模型是``发布者隐瞒数据''。两者相关却不等同------本文的可用性是``数据被持有''这一事实\textbf{本身},而
+DAS 是``如何低成本地确信该事实''的\textbf{检测层}。本文全文在前一意义上使用该术语;下文为行文简洁,``可用性''(availability)与``数据可用性''互为简称、同指此共识层不变量,不再区分。
+
 可用性与前一个不变量有一个本质区别。非等价性是一个关于``图结构是否一致''的逻辑性质------它可以由签名、轮次规则、引用关系来约束。可用性则是一个关于``某份数据在物理上是否真的被足够多的诚实节点持有''的性质------它不能仅靠规则``推理''出来。无论排序规则多么精巧,它都无法凭空让一份从未被传播的数据变得可获取。可用性最终要求一个物理事实:数据确已被持有,或至少在被提交前可被恢复。Cachin
 与 Tessaro
 的异步可验证信息分散(AVID)正是为这一物理事实提供保障的专门机制:它用纠删码把数据切片分散存储,使数据可在部分节点缺席时被重构
@@ -483,6 +528,11 @@ DAG''提升为``全局一致对象''的黏合剂。
 integrity)}\label{ux4e0dux53d8ux91cfux4e09ux56e0ux679cux5386ux53f2ux5b8cux6574ux6027causal-history-integrity}
 
 因果历史完整性要求:当一个验证者看到某个认证区块时,该区块所引用的全部祖先区块在结构上都是良构的------即都是已认证的、且引用关系本身正确无环的区块。须特别说明:它是一个\textbf{纯结构性质},只关乎``祖先在 DAG 结构上是否良构'',而\textbf{不包含}``祖先内容在物理上是否可被获取''------后者属于 §4.3 的数据可用性不变量。剥离之后,因果历史完整性是一个可仅凭本地结构检查验证的逻辑型性质。在 certified DAG 中,该不变量由认证机制连同引用规则共同维持 {[}31{]}, {[}32{]}。
+
+须正视逻辑型/物理型边界在此处的一个\textbf{边缘情况}。说因果历史完整性``可仅凭本地结构检查验证'',严格而言带有一个\textbf{数据前置条件}:要检查某个祖先是否良构(签名正确、引用无环),验证者必须\textbf{已经持有}该祖先区块------没有数据,结构检查无从谈起。因此逻辑型与物理型并非全然正交:逻辑型不变量的验证以物理型可用性为\textbf{前提}。本文仍把因果历史完整性归为逻辑型,理由在于其判据所\textbf{要求的计算}是纯本地、确定性的------给定数据即可判定,无需任何网络交互,亦无需推断``某份数据是否真实存在于别处''这一不可由本地检查得出的物理事实;而数据是否到手,本就是另一个不变量(数据可用性)的职责。换言之,二分的恰当表述是:逻辑型不变量的\textbf{验证逻辑}不依赖物理事实,但其\textbf{执行}消费由物理型不变量供给的数据。这一分层非但不削弱第
+4.5
+节的异质性论点,反而强化了它------正因为逻辑型验证把``数据是否可得''外包给了可用性不变量,去认证后逻辑型才能低成本平移(平移时不必自带数据保证),而所有物理代价都被干净地归集到可用性这一个物理型不变量上(§5.3
+末``因果历史完整性的平移不偷渡物理代价''即此分层的直接推论)。
 
 \subsection{4.5
 三个不变量的异质性}\label{ux4e09ux4e2aux4e0dux53d8ux91cfux7684ux5f02ux8d28ux6027}
@@ -700,6 +750,30 @@ DAG 为通信结构,每个验证者的提交决定是其本地 DAG
 n−f,在最优容错 n=3f+1 时即 2f+1)的引用支持------这一 quorum
 设定涵盖语料库 C 中的全部协议。
 
+为使命题 1 论证的前提可核查,在此把敌手能力\textbf{显式}列为四条假设:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{(A1)静态拜占庭腐化}:敌手在执行开始前腐化至多 f
+  个验证者(n≥3f+1);被腐化者可任意偏离协议,特别是可对同一 (author,
+  round) 槽位制造两个不同的等价区块。
+\item
+  \textbf{(A2)调度全权(rushing adversary)}:敌手完全控制消息的投递顺序与时延(无上界但保证最终送达),且是\textbf{抢先}的------在决定何时、向哪个正确验证者、投递哪条消息之前,敌手可先观察当轮所有已发送消息的内容。
+\item
+  \textbf{(A3)网络异步}:不存在已知的消息延迟上界,正确验证者之间无同步时钟;敌手据(A2)可使不同正确验证者在任一有限时刻持有\textbf{相互不一致}的本地
+  DAG 视图。
+\item
+  \textbf{(A4)确定性本地决策}:每个正确验证者的提交决定是其当前本地 DAG
+  的确定性函数,不含私有随机性(若协议使用公共币,则论证对最坏 coin
+  取值成立)。
+\end{itemize}
+
+§6.2 的反证构造只动用 (A1)--(A3):rushing
+调度(A2)恰是``把 X 投给 v₁、把 X′ 投给
+v₂''得以实现的能力,异步(A3)则保证``该视图不一致可在安全性必须成立的有限时刻持续存在''。命题
+1 的条件前提(``安全性证明依赖槽位唯一性'')与这四条假设共同界定了论证的适用范围。
+
 本章论证的对象不是``所有可设想的 DAG-BFT
 协议'',而是一类\textbf{安全性证明依赖槽位唯一性引理}的协议。所谓\textbf{槽位唯一性引理},指:``在任意正确验证者的本地
 DAG 中,每个 (author, round) 槽位至多被一个区块占据。''
@@ -800,6 +874,18 @@ enforce''上没有自由。这正好解释了第 5.2
 5.4 节的归纳与第 7 章的成本结构,而非命题 1。命题 1
 的作用因此是精确而有限的:它堵死了``去认证可以干脆消除非等价性''这条最诱人的退路,使中心主张的三分之一获得了归纳之外的支撑;另外三分之二仍依赖第
 5 章的归纳性分析。
+
+\textbf{槽位唯一性依赖在实践中能否被打破?}
+命题 1 是\textbf{条件性}的------它只约束``安全性证明依赖槽位唯一性''的协议类。一个自然的追问是:这一条件前提在实践中是否可能被规避,从而架空命题
+1?本文的评估是:在现有 DAG-BFT 范式内,规避它极为困难。原因在于 DAG
+共识的全序映射把 (author, round) 槽位当作全序中的\textbf{原子寻址单位}------``第
+r 轮、作者 a
+的那个区块''是排序规则所寻址的基本对象;只要排序以这种``按槽位寻址''的方式进行,槽位的多重占据就直接破坏全序的良定义性,安全性证明便\textbf{必然}要在某处依赖``每槽位至多一个''。要真正绕开槽位唯一性,需要一种\textbf{不以
+author-round 槽位为寻址单位}的排序抽象(例如纯内容寻址,或允许同槽位多区块共存、在更高层去重的设计),而语料库
+C 乃至本文所知的全部已部署 DAG-BFT
+协议都未采用这类抽象。因此,命题 1
+虽形式上是条件性的,其条件前提在实践中近乎\textbf{普适}------这正是它实际意义之所在:它并非一个适用面狭窄的技术命题,而是堵死了``在主流
+DAG-BFT 范式内干脆消除非等价性''这条退路。
 
 \subsection{6.5
 向部分同步的推广:一个诚实的边界}\label{ux5411ux90e8ux5206ux540cux6b65ux7684ux63a8ux5e7fux4e00ux4e2aux8bdaux5b9eux7684ux8fb9ux754c}
@@ -959,6 +1045,64 @@ uncertified 协议、注入式旋钮;此为诚实阴性结果,sub-critical
 协议部署实测;此为诚实阴性结果。}
 \end{figure}
 
+\subsubsection{7.4.1 ρ 与 Δ\_recover
+的耦合:一个敏感性分析}\label{sec:coupling-sensitivity}
+
+§7.2 把 ρ 与 Δ\_recover
+当作独立变量,从而得到一个良定义的标量阈值 ρ* = Δ\_save /
+Δ\_recover。本节的拥塞反馈正是这一独立性最可能失效的场景:恢复请求本身占用带宽,触发越频繁、单次恢复越贵------ρ 与 Δ\_recover
+被共同驱动而正相关。本节给出耦合情形下的代数分析,并刻画一个使耦合最大化的对抗性情景,以定量界定独立性假设的适用边界。
+
+\textbf{线性耦合模型。}
+把拥塞反馈建模为 Δ\_recover 对 ρ 的线性依赖:Δ\_recover(ρ) =
+Δ\_recover⁰ · (1 + κρ),其中 Δ\_recover⁰ 为零耦合时的基础恢复成本,κ ≥ 0
+为耦合系数(κ=0 即退回 §7.2 的独立情形)。代入净优势公式:
+
+净优势(ρ) ≈ Δ\_save − ρ · Δ\_recover⁰ · (1 + κρ) = Δ\_save −
+Δ\_recover⁰ · ρ − κ · Δ\_recover⁰ · ρ²。
+
+原本对 ρ 线性的净优势因此变为一条开口向下的抛物线:二次项 −κ·Δ\_recover⁰·ρ²
+使净优势随 ρ 上升而\textbf{加速}下跌。令净优势=0,解出耦合情形下的临界频率
+
+$$\rho^{*}_{\mathrm{coupled}} = \frac{-1 + \sqrt{\,1 + 4\kappa\,\Delta_{\mathrm{save}}/\Delta_{\mathrm{recover}}^{0}\,}}{2\kappa}.$$
+
+两个性质值得指出。其一(一致性):当 κ→0 时,对上式用
+$\sqrt{1+x}\approx 1 + x/2$ 展开即得 $\rho^{*}_{\mathrm{coupled}} \to
+\Delta_{\mathrm{save}}/\Delta_{\mathrm{recover}}^{0} =
+\rho^{*}_{\mathrm{indep}}$,耦合模型连续地退回独立模型。其二(单边收缩):对任意
+κ\textgreater0,由严格不等式 $\sqrt{1+x} < 1 + x/2$(x\textgreater0
+时成立)可证 $\rho^{*}_{\mathrm{coupled}} <
+\rho^{*}_{\mathrm{indep}}$------\textbf{耦合总是把翻转点推向更低的
+ρ},即缩小 uncertified
+的占优区。直观地说,正反馈使隐性代价比独立模型预测的更早压过 Δ\_save。
+
+\textbf{对抗性情景。}
+这一代数结果有一个直接的安全含义。一个自适应敌手不必盲目提高故障率
+ρ;它可以\textbf{择时}------在网络已经拥塞、Δ\_recover⁰
+已偏高的时刻集中制造数据缺失,从而最大化有效
+κ。换言之,敌手通过把``故障频率''与``单次恢复成本''人为正相关起来,迫使系统沿抛物线的陡峭段运行。由此可得一个对评测有意义的推论:独立模型(κ=0)是对
+uncertified 一侧\textbf{最有利}的假设;任何现实的拥塞反馈或择时敌手,都只会使真实的翻转频率\textbf{低于}
+§7.6.3 在独立假设下标定的 ρ* 值。
+
+\textbf{量级。} 这一收缩并非可忽略的二阶修正。以 §7.6.3 标定的独立阈值
+$\rho^{*}_{\mathrm{indep}} \approx 0.038$ 为基准,代入一个中等耦合
+κ=50(即 ρ 每升高 0.02,单次恢复成本即翻倍),得 $x =
+4\kappa\,\rho^{*}_{\mathrm{indep}} \approx 7.6$,$\rho^{*}_{\mathrm{coupled}}
+\approx (-1+\sqrt{8.6})/100 \approx 0.019$------临界频率近乎减半。即在敌手择时或重拥塞下,uncertified
+的占优区可被实质性压缩到独立估计的一半左右。
+
+\textbf{与实证的呼应。} §7.6.3 的``诚实模型偏离''正是这一耦合的部署指纹:当以单窗
+amortized cadence 直接测净优势时,净优势对 Δ\_recover
+呈非单调(线性拟合 R²≈0.02),因为在极高 Δ\_recover 下 certificate-gate
+会延长地排斥仍在恢复、尚未被 quorum
+接受的落后节点------这是一个使 Δ\_recover
+与有效触发频率相互纠缠的竞争效应,即 κ\textgreater0
+的经验显影。因此独立性假设的失效不是一个纯理论顾虑,而是已在 §7.6.3
+的极端区被观测到。综上,§7.2 中``ρ* 为良定义标量''的表述,应严格限定为
+κ≈0(低耦合)区间内的近似;在该区间之外,ρ*
+退化为``存在一条净优势归零边界''这一定性事实(与
+§7.2、§9 的限定一致),且该边界的位置只会比独立估计更靠近 ρ=0。
+
 \subsection{7.5
 翻转条件三:网络非对称与负载偏斜}\label{ux7ffbux8f6cux6761ux4ef6ux4e09ux7f51ux7edcux975eux5bf9ux79f0ux4e0eux8d1fux8f7dux504fux659c}
 
@@ -1047,6 +1191,19 @@ benchmark
 多在良好情形附近(ρ≈0)采样,它们报告的数字在其采样区域内是真实的,但把一个高维性能函数在少数维度上的投影,误读为了整个函数的形状。这就回答了贡献
 A。
 
+\textbf{实证范围总则(适用于 §4.5、§5 与 §7.3--7.6
+的全部部署锚点)。}
+为免在每处声明重复同一组限定,在此集中声明本文部署实证共享的构念效度边界,后文各处仅在\textbf{偏离}此总则时另作说明:(i)\textbf{单一引擎}------全部实测在
+Sui/Mysticeti(commit \texttt{62ee6ada})这一单一 uncertified
+引擎上展开,Mysticeti 家族之外无独立协议;(ii)\textbf{代理 certified
+臂}------§7.5、§7.6.3 的 certified 对照是同一引擎上一个可开关的可用性证书(2f+1
+接受,经 RoundProber 通道观测),\textbf{非}密码学 RBC 签名聚合(其量级外推见
+§7.6.4);(iii)\textbf{注入式 Δ\_recover}------涉及单次恢复成本处均使用在恢复路径人为植入的时延旋钮,而非真实
+certified 协议的恢复开销;(iv)\textbf{标定而非
+benchmark}------因此本文部署所确证的,是各成本轴上 uncertified
+一侧的\textbf{形态(方向、量级、缩放律)}与净优势的\textbf{成本结构},而非两套独立协议引擎间的绝对延迟比较。后者(含真实
+RBC 开销、跨独立引擎)仍属未来工作(§9、§10)。
+
 \subsubsection{7.6.1
 跨规模与跨强度部署实证}\label{ux8de8ux89c4ux6a21ux4e0eux8de8ux5f3aux5ea6ux90e8ux7f72ux5b9eux8bc1}
 
@@ -1110,6 +1267,17 @@ f,ratio 1.00--1.03)与 n=4(at/above f,ratio 0.97)一致:跨越 BFT 容差边界 
 1.08)与 n=4(ratio 1.12)上双双把 p95 推入超可加。换言之,§7.3
 所述``或有负债在故障下集中爆发''在部署中表现为一笔由故障强度驱动且非线性(超可加)的尾部代价,其触发门槛是把验证者挤出
 fast-quorum 参与的单故障强度,而非形式化的 BFT 安全边界 f。
+
+就统计报告补三点说明。其一(\textbf{为何取 p95}):或有负债是一个\textbf{尾部}现象------良好轮次的代价为零、故障轮次集中爆发,故本文以
+cadence 的 p95 而非均值或 p99 为主观测量------均值会被大量良好轮次稀释而掩盖尾部爆发,p99
+在每 cell 10--20
+次重复的样本量下方差过大、不稳定;p95 在``对尾部敏感''与``在本样本量下可稳定估计''之间取得平衡。其二(\textbf{效应量}):表
+7-1 的比值(observed /
+expected\_additive)\textbf{本身即一个效应量},其偏离 1
+的幅度直接度量超可加强度------5\% 丢包下 n=7 的 +8\%、n=4 的
++12\%,属中等强度的尾部放大,而非仅``边缘显著''。其三(\textbf{精度}):各
+cell 比值基于 10--20
+次重复,三个关键超可加 cell 另以独立种子完整复测(§9);故可信的是效应的\textbf{方向与量级},而非比值的第三位有效数字。
 
 须明确这一实证的范围:它在单一 uncertified 协议(Sui,Mysticeti
 家族)上展开,没有 certified 对照臂;因此它探查的是 uncertified
@@ -1189,6 +1357,17 @@ cadence 恢复时延 t\_resume 随 Δ\_recover
 成本模型的三个量------Δ\_save、认证对恢复成本的缩减、以及净优势翻转频率
 ρ*------首次提升为真实 n=7 部署的实测。
 
+须从一开始就明确本节实证的认识论定位,以免被误读为一次跨协议
+benchmark。本节是一次\textbf{成本模型参数的结构性标定}(structural
+calibration),经由一个\textbf{代理认证开关}(proxy-certified
+toggle)实现,而非两套独立协议的绝对延迟比较。所谓代理认证,指在同一引擎上以一个可开关的\textbf{可用性证书}(被一个
+2f+1 quorum
+独立接受)来模拟``认证'':它捕获认证的\textbf{结构性效应}------一个独立的确认往返,以及``被引用的祖先已被一个
+quorum 持有''------但\textbf{不复现}真实 Bracha RBC 的密码学签名聚合与
+O(n²) 广播开销(这两项的量级外推见
+§7.6.4)。这一代理设计是有意的:它把``认证强度''隔离为同一引擎上的单一可开关变量,从而以牺牲``绝对延迟可比性''换取``结构性归因的内部效度''。下文给出的全部数值,都应在这一``结构标定而非绝对
+benchmark''的意义下理解;其构念效度限定在本节末与 §9 集中声明。
+
 操作化(受控 minimal-pair):在同一 Sui/Mysticeti binary
 上把认证做成一个可开关的 certificate-gate。cert ON
 时,一个父轮祖先区块仅当被一个 2f+1 权益 quorum 独立接受(经 Sui 已有的
@@ -1235,8 +1414,8 @@ certificate-gate 实现的是认证的\textbf{可用性证书}(被一个 2f+1 qu
 更忠实(确实动用了一个独立的确认往返),但仍\textbf{不是}对真实
 Bullshark/Narwhal RBC 签名开销的测量。实证仍在单一引擎(Mysticeti 加/去
 gate)上展开,而非两套独立协议的 benchmark;Δ\_recover 仍为注入式旋钮;ρ*
-为一个 band(2 次重复,Δ\_recover=500
-处有一个噪声离群点),可信的是其量级而非精确值。因此本节标定的是
+为一个 band(由 2 次重复给出的\textbf{范围}而非置信区间,Δ\_recover=500
+处有一个噪声离群点),可信的是其量级而非精确值------给出严格的置信区间需要更多独立重复,属未来工作。因此本节标定的是
 certified/uncertified 净优势的\textbf{成本结构}------Δ\_save
 为正且可观、认证确实缩减恢复侧或有负债、且存在一个 ρ*
 翻转------而非某一对真实协议的绝对延迟比较。复现 harness、Route A1
@@ -1248,14 +1427,64 @@ certified/uncertified 净优势的\textbf{成本结构}------Δ\_save
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={图 7-5 含 certified 对照臂的净优势翻转标定。左:关键路径故障下两臂的恢复停顿 t\_resume 随 Δ\_recover 的剂量响应(上:cert OFF/uncertified;下:cert ON/certified;绿带=认证带来的恢复节省 excess);右:由 Δ\_save 与 excess(Δ\_recover) 解出的净优势翻转故障率 ρ*(Δ\_recover)------其上 certified 占优、其下 uncertified 占优。注:本图为真实 n=7 Sui 部署实测;cert-gate 为可用性证书(非密码学签名),Δ\_recover 为注入式旋钮。}]{figures/figure_7_5_certified_arm_crossover.png}}
-\caption{\textbf{图 7-5} 含 certified
-对照臂的净优势翻转标定。左:关键路径故障下两臂的恢复停顿 t\_resume 随
+\caption{\textbf{图 7-5} 含代理认证(proxy-certified)对照臂的净优势翻转\textbf{结构性标定}。左:关键路径故障下两臂的恢复停顿 t\_resume 随
 Δ\_recover 的剂量响应(上:cert OFF/uncertified;下:cert
 ON/certified;绿带=认证带来的恢复节省 excess);右:由 Δ\_save 与
 excess(Δ\_recover) 解出的净优势翻转故障率 ρ*(Δ\_recover)------其上
 certified 占优、其下 uncertified 占优。注:本图为真实 n=7 Sui
-部署实测;cert-gate 为可用性证书(非密码学签名),Δ\_recover 为注入式旋钮。}
+部署实测,定位为成本结构标定而非绝对 benchmark;cert-gate
+为可用性证书(2f+1 接受,非密码学签名),Δ\_recover 为注入式旋钮(真实 RBC
+开销外推见 §7.6.4)。}
 \end{figure}
+
+\subsubsection{7.6.4 从代理臂到真实 RBC:一个解析外推}\label{sec:rbc-analytic}
+
+§7.6.3 的对照臂是认证的一个\textbf{代理}操作化(可用性证书,2f+1
+接受),其 Δ\_save 捕获的是``等 quorum
+接受再引用''这一独立确认轮的延迟,而\textbf{不是}真实 Bracha RBC {[}5{]}
+连同 BLS 签名聚合 {[}8{]}
+的开销。一个自然且必要的追问是:若把代理臂换成真实认证,本节标定的成本结构会朝哪个方向、以多大量级偏移?本节给出一个解析估计来回答它。须先声明其性质:以下是\textbf{量纲分析与数量级估计,而非测量},意在界定
+§7.6.3 标定值相对真实认证协议的\textbf{偏置方向},而非给出可直接引用的绝对数字。
+
+记单跳广域网往返为 RTT(地理分布部署典型为
+100--250 ms,同区域为数十 ms),验证者数为 n,容错为 f(n≥3f+1)。把真实认证相对代理臂多出的开销拆为三个分量。
+
+\textbf{(1)通信轮次 / 延迟分量。}
+代理臂只加回\textbf{一个}独立确认往返(≈1·RTT),实测 Δ\_save≈0.116
+s/commit。真实 certified DAG 形成证书需要更多消息时延:Narwhal/Tusk
+{[}32{]} 式的可证广播为``提案 → 2f+1 投票 → 聚合并分发证书''约
+\textbf{2 个消息时延},而经典 Bracha RBC {[}5{]} 为 send/echo/ready
+三阶段、约 \textbf{3 个消息时延}。因此真实认证的 Δ\_save
+延迟分量约为代理臂的 2--3 倍(≈0.2--0.35 s/commit
+量级)。\textbf{方向明确:代理臂系统性地\emph{低估} Δ\_save}------真实去认证省下的轮次比代理臂测得的更多。
+
+\textbf{(2)密码学 CPU 分量。} BLS {[}8{]} 单次签名约数百微秒,聚合 k 个签名为 k 次群加(可忽略);验证一个针对\emph{同一}区块的聚合签名约
+2 次配对(约 1--3 ms),其成本近似常数而不随签名数线性增长。相对一个
+RTT,这一 CPU 分量在中小委员会(如 n=7,2f+1=5)下\textbf{可忽略}(亚 ms
+至数 ms);仅在大委员会(n≥100,验证成本趋于数十次配对的量级)下才接近一个
+RTT。因此在本文 n=7 部署的尺度上,``省去 BLS 验证''并非 Δ\_save
+的主要来源------这恰恰\textbf{佐证}了代理臂(不含密码学)在\emph{延迟}维度上是认证延迟的合理代理。
+
+\textbf{(3)消息复杂度 / 带宽分量。} Bracha RBC 的 O(n²)
+消息复杂度在 n=7 下约为 49 条/实例(可忽略),但随 n
+平方增长:n=100 时约 10⁴
+条/实例,在带宽受限或非对称网络下成为 certified 一侧的主要惩罚。这一项正是
+§7.5 所述``RBC 自身的 O(n²)
+在带宽非对称下压迫低带宽节点''的来源;代理臂(只加一个确认往返、不复制
+O(n²) 全广播)\textbf{未能捕获它},因而在大 n 下\emph{低估} certified 一侧的常态成本。
+
+把三项合起来,可得一个清晰的偏置判断。在本文的小委员会尺度(n=7):代理臂对
+Δ\_save 给出一个\textbf{保守(偏低)}的延迟估计,而其省略的密码学与 O(n²)
+分量均可忽略------因此 §7.6.3 标定的三个定性结论(Δ\_save\textgreater0、认证缩减恢复侧或有负债、存在一个
+ρ* 翻转)在外推到真实 RBC 时\textbf{不会反转};其中 Δ\_save
+的延迟分量只会被\emph{放大}。至于翻转点 ρ* 的\emph{精确}位置,由于其分子(Δ\_save)与分母侧(认证带来的恢复节省)在外推下\emph{同时}增大,需要真实
+benchmark 重新定位;但``存在一条净优势归零边界''这一定性事实不依赖具体外推。在大委员会尺度(n≥100):真实
+RBC 的 O(n²)
+带宽惩罚会显著抬高 certified 一侧的\textbf{常态}开销,使 Δ\_save 的净值与
+ρ*
+的位置必须重新标定------这进一步说明 certified/uncertified 的相对优劣是\textbf{规模依赖}的,与
+§7.5、§7.6 的条件化结论一脉相承。须重申:以上为解析数量级估计;一个以真实
+RBC 签名开销为对照、跨两套独立引擎的受控 benchmark 仍属未来工作(§9、§10)。
 
 \subsection{7.7
 面向设计者的判定程序}\label{ux9762ux5411ux8bbeux8ba1ux8005ux7684ux5224ux5b9aux7a0bux5e8f}
@@ -1319,6 +1548,46 @@ DAG
 \textbf{维度二:reconciliation trigger 条件。}
 当数据缺失被检测到时,协调修复(reconciliation)在何种条件下、以何种粒度被触发?是每发现一个缺失区块即触发,还是批量触发?触发是否依赖超时?触发的代价由谁承担?这一维度决定了第
 7 章模型中 ρ 与 Δ\_recover 的具体形态。
+
+为使维度二可操作、避免它沦为一个定性标签,本文给出它的一个\textbf{半形式化参数化}。把一个协议的
+reconciliation trigger 刻画为一个四元组 T = ⟨G, C, A, B⟩:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{触发粒度 G} ∈ \{per-miss, batched(k),
+  epoch\}:每发现一个缺失区块即触发、累积 k
+  个(或一个时间窗)后批量触发、或按 epoch 边界触发。
+\item
+  \textbf{触发条件 C} ∈ \{on-reference, on-commit,
+  on-timeout(τ)\}:在区块被引用时、被提交时、或超时 τ
+  后检测缺失并触发。
+\item
+  \textbf{主动性 A} ∈ \{pull, push\}:由缺数据的节点主动拉取(pull),还是由持有数据的节点推送补块(push)。
+\item
+  \textbf{代价承担 B} ∈ \{requester, holder,
+  amortized\}:恢复带宽由请求方、持有方、还是全网摊销承担。
+\end{itemize}
+
+这一参数化与第 7 章成本模型的耦合是\textbf{显式}的:触发频率 ρ
+主要由 (G, C) 决定------``per-miss + on-reference''给出最高的 ρ,而
+``batched/epoch + on-commit''显著压低 ρ;单次恢复成本 Δ\_recover
+主要由 (A, B) 与 G 决定------push 式补块(如 §7.6.2
+观察到的推送式 backlog 绕过关键路径)可把 Δ\_recover 压到近零,而
+``pull + requester-pays''在落后节点上集中 Δ\_recover。换言之,维度二不是修辞,而是一个其取值可从协议描述中\textbf{读出}、且可经
+(ρ, Δ\_recover) 定量传导到延迟的设计向量。
+
+把这一参数化套到语料库 C,四个协议在维度二上立即分离:Mysticeti
+{[}43{]} 为 ⟨per-miss, on-commit, pull,
+requester⟩(逐缺失、提交时触发的按需拉取,故 ρ 偏高);Adelie {[}45{]}
+的维度一位置与 Mysticeti 相近,却通过区块视图规则在\textbf{上游}限制等价从而压低有效
+ρ,相当于在 (G, C) 之前再加一道``少产生缺失''的预防层;Cordial Miners
+{[}42{]} 的 blocklace 偏序允许在\textbf{传播阶段}(on-reference)即检测冲突,把
+C 前移;DispersedLedger {[}47{]} 则以纠删码编码的承诺把 B 推向
+amortized、把 Δ\_recover
+压低。这四点在 certified/uncertified 二分下完全不可见(Adelie 与 Mysticeti
+同属 uncertified),在维度二的参数化下却清晰可分------这正是维度二独立解释力的直接体现(§8.4
+进一步展开)。
 
 这两个维度共同构成的平面,才是描述 DAG-BFT
 设计空间的恰当坐标系。把``是否认证''作为坐标,等于只观察了维度一的一个端点(引用前
@@ -1387,18 +1656,17 @@ certified/uncertified 二分完全遮蔽的、独立的设计维度。其独立�
 已展示了编码在维度二上的威力,但其维度一定位与上述组合不同;Mysticeti/Mahi-Mahi
 在维度一靠后,但维度二仍以``逐缺失触发''为主。上述组合点能否真被构造出一个兼具两种优势的协议,是本文坐标系提出的一个\textbf{可证伪的预测},留作未来工作------而能够提出这样一个具体、可证伪的预测,本身就是深层轴在``解释现有协议''之外、具有生成性的一面。
 
-\subsection{8.5 深层轴的延伸:availability-enforcement
+\subsection{8.5 深层轴的一个延伸猜想:availability-enforcement
 与排序公平性}\label{ux6df1ux5c42ux8f74ux7684ux5ef6ux4f38availability-enforcement-ux4e0eux6392ux5e8fux516cux5e73ux6027}
 
-本文的深层轴虽以延迟为出发点,但它的影响并不止于延迟。DAG
+最后,本文以一个\textbf{明确标注为猜想(conjecture)、而非已论证结论}的延伸收尾,以示意深层轴的影响\textbf{或许}不止于延迟。DAG
 共识的排序规则建立在 DAG 结构之上,而 DAG
-结构由哪些区块可用、何时可用所塑造------这意味着
-availability-enforcement
-机制会间接影响交易的最终排序,进而触及最大可提取价值(MEV)与排序公平性问题 {[}53{]}--{[}56{]}。
-
-本文的深层轴为理解这一关联提供了一个可检验的猜想:当 availability-enforcement
-时机靠后时(post-commit),一个区块``是否进入
-DAG''在更晚的时刻、由更依赖运行时条件的因素决定,这给了拜占庭节点更大的、操纵``哪些区块在排序时可见''的空间------即 enforcement 时机不仅是一个延迟维度,也是一个排序可操纵性维度。而在 pre-reference(certified) enforcement 下,区块内容在作者能观察到排序态势之前就已被认证锁定,这一操纵选项被关闭。须明确这只是一个待未来工作验证的机制猜想:它未量化敌手由此可获取的 MEV、未给出防护下界。但这一猜想展示了深层轴在延迟分析之外的潜在解释力------进一步支持了贡献 C 的可辩护内核:availability-enforcement 机制及其 reconciliation trigger,是比 certified/uncertified 更根本的变量。
+结构由哪些区块可用、何时可用所塑造------由此自然浮现一个\textbf{待验证的机制猜想}:availability-enforcement
+时机越靠后(post-commit),一个区块``是否及何时进入
+DAG''便越晚、越依赖运行时条件被决定,从而\textbf{可能}给拜占庭节点更大的、操纵``排序时哪些区块可见''的空间;而在
+pre-reference(certified)下,区块在作者观察到排序态势之前即被锁定,该操纵选项被关闭。本文\textbf{不}就此主张任何结论,也\textbf{不}以其支撑贡献
+C:此处既未量化敌手可获取的 MEV
+{[}53{]}--{[}56{]},未给出任何防护下界,也无任何实证。其唯一作用,是示意本文坐标系\textbf{有能力生成}延迟之外的、可证伪的研究问题------这一生成性本身,是深层轴作为分析框架的一个旁证。该猜想的形式化与检验留作未来工作(§10)。
 
 \section{第 9 章
 局限、误用声明与威胁有效性}\label{ux7b2c-9-ux7ae0-ux5c40ux9650ux8befux7528ux58f0ux660eux4e0eux5a01ux80c1ux6709ux6548ux6027}
@@ -1532,7 +1800,10 @@ certified 对照臂,首次在部署上把 Δ\_save
 测为正、确认认证缩减恢复成本、并把净优势翻转 ρ* 定量定位于约
 0.013--0.038 次/commit。尚待完成的是把这条可用性证书的对照臂升级为含真实
 RBC 签名开销、跨两套独立引擎的受控
-benchmark,以从``成本结构标定''推进到``真实协议对的绝对延迟比较''。
+benchmark,以从``成本结构标定''推进到``真实协议对的绝对延迟比较''。此外,§8.5
+提出的延伸猜想------把 availability-enforcement
+时机视为一个``排序可操纵性''维度------其形式化、敌手可获取
+MEV 的量化与防护下界的给出,是深层轴在延迟之外的一个可证伪方向,同样留作未来工作。
 
 \section{声明}\label{sec:declaration}
 
@@ -1591,6 +1862,62 @@ cadence 随恢复频率退化(图 7-6)、§7.4 sub-critical 抖动阴性结果(�
 Disclosure)}:本文的结构组织和实验脚本撰写使用了大语言模型辅助。研究论点、核心论证(包括第 6 章必要性论证与第 8
 章深层轴的提出)与最终判断由作者负责并确认。全部参考文献经独立检索核验。
 
+\section{附录 A:复现指南}\label{sec:repro}
+
+本附录把复现流程集中为一处,与上文``数据可用性声明''互补。全部部署材料以
+commit \texttt{62ee6ada}(MystenLabs/sui,main 分支,2026-05-22)为基线。
+
+\textbf{A.1 环境前提。}
+(i)编译论文------TeX 发行版(MiKTeX/TeX Live)+ XeLaTeX + Windows
+字体(SimSun、SimHei、KaiTi、Consolas);(ii)解析模型与仿真------Python 3
+加 \texttt{simpy}、\texttt{numpy}、\texttt{matplotlib};(iii)部署实证------Docker
+Desktop + PowerShell,并以 \texttt{git clone} 后 \texttt{git checkout
+62ee6ada} 获取 Sui 源码(vendor 源码不随本仓库分发)。
+
+\textbf{A.2 三条复现轨。}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{解析成本模型与图 1--3}(第 7--8 章):在
+  \texttt{submit/simulation/} 下,\texttt{run\_sweep.py} 与
+  \texttt{run\_calibrated\_sweep.py} 生成成本台账与参数扫描,\texttt{run\_verify.py}
+  复现 §7.2 的 Monte Carlo 实现核对(2000 轮 / 500
+  trial)。图 1--3 为该解析模型的数值/定性图示,非真实协议实测。
+\item
+  \textbf{部署或有负债实证}(§4.5、§5、§7.3--7.6.1):在
+  \texttt{submit/deployment/multivalidator/} 下,按 \texttt{config/}
+  中的实验矩阵运行 \texttt{scripts/} 下对应 PowerShell
+  脚本;逐 run 指标落入 \texttt{data/per\_run\_metrics/}(503
+  个目录),按场景汇总落入 \texttt{data/runs/}。
+\item
+  \textbf{代理认证对照臂标定}(§7.6.2--7.6.3):在
+  \texttt{submit/calibration/} 下,\texttt{scripts/phaseA\_recover\_calibration.ps1}
+  对应 §7.6.2 的 Δ\_recover 旋钮标定,\texttt{scripts/phase2c\_excess\_sweep.ps1}
+  对应 §7.6.3 的 certificate-gate excess 扫描;Route A1 共识源码改动与结果见
+  \texttt{PHASE1\_RESULTS.md}、\texttt{PHASE2\_RESULTS.md}。
+\end{itemize}
+
+\textbf{A.3 图--脚本--数据对应。}
+每张部署图均可由一个汇总 CSV 与一个分析脚本重建,主要对应:图
+4-1←\texttt{payload\_size\_summary.csv};图
+5-1←\texttt{chapter5\_enforcement\_summary.csv};图
+5-2/5-3←\texttt{partition\_grid\_summary.csv};图
+7-6←\texttt{rho\_scan\_summary.csv};图
+7-7←\texttt{gst\_jitter\_summary.csv};图
+7-8←\texttt{net\_asymmetry\_summary.csv};图 7-3 与表
+7-1←\texttt{phaseA\_criticalpath\_summary.csv} 及
+\texttt{phaseA\_criticalpath\_n4\_summary.csv};图
+7-5←\texttt{phase2c\_excess\_sweep\_summary.csv} 与
+\texttt{phase1b\_dsave\_calibration\_summary.csv}。统一的图表生成入口为
+\texttt{submit/calibration/scripts/generate\_figures.py};各分析脚本(如
+\texttt{analyze\_payload\_size.py})与汇总 CSV 同名对应。
+
+\textbf{A.4 数据完整性事件。} 两起已诚实记录的数据完整性事件(P0-1
+\texttt{timeout.exe} 伪迹致 recFetch 误记为 0;P0-2 ρ
+首轮近恒定的设计缺陷)及其受污染数据,存档于
+\texttt{submit/calibration/EXPERIMENTAL\_COVERAGE.md},以便审查者核验修复前后的差异。
+
 \begin{thebibliography}{99}
 \setlength{\itemsep}{2pt plus 1pt}
 \bibitem{ref1} L. Lamport, R. Shostak, and M. Pease, “The Byzantine generals problem,” \textit{ACM Trans. Program. Lang. Syst.}, vol. 4, no. 3, pp. 382–401, 1982.
@@ -1633,14 +1960,14 @@ Disclosure)}:本文的结构组织和实验脚本撰写使用了大语言模型�
 \bibitem{ref38} B. Arun, Z. Li, F. Suri-Payer, S. Das, and A. Spiegelman, “Shoal++: High throughput DAG BFT can be fast!,” in \textit{Proc. 22nd USENIX Symp. Networked Systems Design and Implementation (NSDI)}, 2025.
 \bibitem{ref39} N. Shrestha, R. Shrothrium, A. Kate, and K. Nayak, “Sailfish: Towards improving the latency of DAG-based BFT,” in \textit{Proc. IEEE Symp. Security and Privacy (S\&P)}, 2025.
 \bibitem{ref40} D. Malkhi, C. Stathakopoulou, and M. Yin, “BBCA-Chain: Low latency, high throughput BFT consensus on a DAG,” in \textit{Proc. Financial Cryptography and Data Security (FC)}, 2024.
-\bibitem{ref41} N. Shrestha and A. Kate, “Towards improving throughput and scalability of DAG-based BFT SMR,” IACR Cryptol. ePrint Arch., Paper 2025/877, 2025.
+\bibitem{ref41} N. Shrestha and A. Kate, “Towards improving throughput and scalability of DAG-based BFT SMR,” in \textit{Proc. 21st European Conf. Computer Systems (EuroSys)}, 2026. (Also IACR Cryptol. ePrint Arch., Paper 2025/877.)
 \bibitem{ref42} I. Keidar, O. Naor, O. Poupko, and E. Shapiro, “Cordial Miners: Fast and efficient consensus for every eventuality,” in \textit{Proc. 37th Int. Symp. Distributed Computing (DISC)}, 2023.
 \bibitem{ref43} K. Babel, A. Chursin, G. Danezis, L. Kokoris-Kogias, and A. Sonnino, “Mysticeti: Reaching the limits of latency with uncertified DAGs,” in \textit{Proc. Network and Distributed System Security Symp. (NDSS)}, 2025.
 \bibitem{ref44} P. Jovanovic, L. Kokoris-Kogias, B. Kumara, A. Sonnino, P. Tennage, and I. Zablotski, “Mahi-Mahi: Low-latency asynchronous BFT DAG-based consensus,” in \textit{Proc. IEEE Int. Conf. Distributed Computing Systems (ICDCS)}, 2025, pp. 549–559.
 \bibitem{ref45} A. Chursin, “Adelie: Detection and prevention of Byzantine behaviour in DAG-based consensus protocols,” arXiv:2408.02000, 2024.
 \bibitem{ref46} S. Blackshear, A. Chursin, G. Danezis, A. Kichidis, L. Kokoris-Kogias, X. Li, M. Logan, et al., “Sui Lutris: A blockchain combining broadcast and consensus,” in \textit{Proc. ACM SIGSAC Conf. Computer and Communications Security (CCS)}, 2024.
 \bibitem{ref47} L. Yang, S. J. Park, M. Alizadeh, S. Kannan, and D. Tse, “DispersedLedger: High-throughput Byzantine consensus on variable bandwidth networks,” in \textit{Proc. 19th USENIX Symp. Networked Systems Design and Implementation (NSDI)}, 2022.
-\bibitem{ref48} M. Al-Bassam, A. Sonnino, and V. Buterin, “Fraud and data availability proofs: Detecting invalid blocks in light clients,” in \textit{Proc. Financial Cryptography and Data Security (FC)}, 2021.
+\bibitem{ref48} M. Al-Bassam, A. Sonnino, V. Buterin, and I. Khoffi, “Fraud and data availability proofs: Detecting invalid blocks in light clients,” in \textit{Proc. Financial Cryptography and Data Security (FC)}, 2021.
 \bibitem{ref49} N. Giridharan, F. Suri-Payer, I. Abraham, L. Alvisi, and N. Crooks, “Autobahn: Seamless high speed BFT,” in \textit{Proc. 30th ACM Symp. Operating Systems Principles (SOSP)}, 2024.
 \bibitem{ref50} E. Kokoris-Kogias, P. Jovanovic, L. Gasser, N. Gailly, E. Syta, and B. Ford, “OmniLedger: A secure, scale-out, decentralized ledger via sharding,” in \textit{Proc. IEEE Symp. Security and Privacy (S\&P)}, 2018, pp. 583–598.
 \bibitem{ref51} P. Civit, S. Gilbert, and V. Gramoli, “Polygraph: Accountable Byzantine agreement,” in \textit{Proc. IEEE Int. Conf. Distributed Computing Systems (ICDCS)}, 2021.

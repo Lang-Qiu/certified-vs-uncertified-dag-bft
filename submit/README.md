@@ -4,7 +4,7 @@
 
 - **标题**: DAG-BFT 共识中认证机制的结构性作用：去认证设计的隐性代价与性能边界
 - **英文**: The Structural Role of Certification in DAG-BFT Consensus: Hidden Costs and Performance Bounds of De-Certification
-- **页数**: 43 页
+- **页数**: 49 页（含复现指南附录）
 - **参考文献**: 62 篇
 - **图表**: 13 张图
 - **Sui 版本**: MystenLabs/sui commit `62ee6ada`（2026-05-22，main 分支）
@@ -16,7 +16,7 @@ submit/                                (26 MB, 2164 文件)
 ├── README.md                          # 本文件
 │
 ├── paper/                             # 论文文件
-│   ├── final_paper.pdf                # 最终 PDF（43 页）
+│   ├── final_paper.pdf                # 最终 PDF（49 页）
 │   ├── final_paper.tex                # LaTeX 源文件
 │   ├── final_paper.docx               # Word 版本
 │   ├── final_paper.md                 # Markdown 源文件
