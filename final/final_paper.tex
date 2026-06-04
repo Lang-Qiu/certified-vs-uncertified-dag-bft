@@ -1687,38 +1687,52 @@ benchmark,以从``成本结构标定''推进到``真实协议对的绝对延迟�
 
 \textbf{数据可用性声明(Data Availability
 Statement)}:本文以理论解析为内核,并含一个部署实证组件。文中引用的全部协议规范与论文均为公开发表文献,可经由参考文献所列
-DOI、arXiv 或 IACR ePrint 编号获取。第 7--8
-章成本模型的仿真与图表生成代码(Python,含成本模型、Monte Carlo 仿真与
-Figure 1--3 的可复现脚本)随论文一并提供;图 1、图 2
+DOI、arXiv 或 IACR ePrint 编号获取。本文全部代码、数据与实验材料已公开存档于
+GitHub 仓库
+\texttt{https://\allowbreak{}github.com/\allowbreak{}Lang-Qiu/\allowbreak{}certified-vs-uncertified-dag-bft},以下按模块说明。
+
+\textbf{仿真代码与解析模型}:第 7--8
+章成本模型的仿真与图表生成代码(Python/SimPy,含成本模型、Monte Carlo 仿真与
+Figure 1--3 的可复现脚本)存档于仓库
+\texttt{submit/\allowbreak{}simulation/\allowbreak{}};图 1、图 2
 为该解析模型的数值图示,图 3 为按第 8
-章深层轴框架的定性定位,均非真实协议实测。§7.6.1 的实证(图 7-3、表
-7-1)则来自真实 Sui n=7/n=4 多验证者部署的受控故障注入实验,共 290+
+章深层轴框架的定性定位,均非真实协议实测。形式化模型代码存档于
+\texttt{submit/\allowbreak{}model/\allowbreak{}dag\_\allowbreak{}bft\_\allowbreak{}model.py}。
+
+\textbf{部署实证}:§7.6.1 的实证(图 7-3、表
+7-1)来自真实 Sui n=7/n=4 多验证者部署的受控故障注入实验,共 290+
 次重复(含独立种子复现)。部署基于 MystenLabs/sui 主分支 commit
-\texttt{62ee6ada}(2026-05-22),其编排脚本、原始日志与汇总报告存档于
-\texttt{stage7\_\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}}。§7.6.2 的恢复侧旋钮标定(图
-7-4)来自带受控 Δ\_recover 旋钮的 Sui
+\texttt{62ee6ada}(2026-05-22)。实验编排脚本、Docker Compose 配置与分析工具存档于仓库
+\texttt{submit/\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}};503 次逐 run
+指标(含 \texttt{consensus\_metrics.csv}、控制器记录与配置快照)存档于
+\texttt{submit/\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}data/\allowbreak{}per\_\allowbreak{}run\_\allowbreak{}metrics/\allowbreak{}};19
+个汇总 CSV 存档于
+\texttt{submit/\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}data/\allowbreak{}runs/\allowbreak{}}。
+
+§7.6.2 的恢复侧旋钮标定(图
+7-4)来自带受控 $\Delta$\_recover 旋钮的 Sui
 构建在关键路径轮转故障下的部署实测,其 harness 与图表生成脚本存档于
-\texttt{stage9\_\allowbreak{}cross\_\allowbreak{}protocol\_\allowbreak{}calibration/\allowbreak{}},逐 rep
-数据(\texttt{phaseA\_\allowbreak{}criticalpath\_\allowbreak{}*.\allowbreak{}csv})存档于
-\texttt{stage7\_\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}data/\allowbreak{}runs/\allowbreak{}}。§7.6.3 的
+\texttt{submit/\allowbreak{}calibration/\allowbreak{}scripts/\allowbreak{}}。§7.6.3 的
 certified 对照臂标定(图 7-5)来自同一 Sui 构建中一个可经环境变量开关的
 certificate-gate(Route
 A1,认证的可用性证书操作化)在关键路径轮转故障下的部署实测,其共识源码改动、Phase
-1/2 harness 与图表脚本存档于
-\texttt{stage9\_\allowbreak{}cross\_\allowbreak{}protocol\_\allowbreak{}calibration/\allowbreak{}},逐 rep
-数据(\texttt{phase2c\_\allowbreak{}excess\_\allowbreak{}sweep\_\allowbreak{}summary.\allowbreak{}csv} 等)存档于
-\texttt{stage7\_\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}data/\allowbreak{}runs/\allowbreak{}}。此外,第 4--5 章与
+1/2 harness 与图表脚本亦存档于
+\texttt{submit/\allowbreak{}calibration/\allowbreak{}}。
+
+此外,第 4--5 章与
 §7.3--7.5 的部署锚点亦来自真实 Sui n=7/n=4 多验证者部署的受控实验:§4.5
 区块负载异质性(图 4-1)、§5.2--5.3 逻辑型路径固定开销(图 5-1)、§5.4
 数据可用性或有负债的丢包/分区对照与剂量响应(图 5-2、图 5-3)、§7.3
 cadence 随恢复频率退化(图 7-6)、§7.4 sub-critical 抖动阴性结果(图
-7-7)、§7.5 非对称网络下 certified 臂鲁棒性(图 7-8),其编排脚本、逐 rep
-汇总(\texttt{payload\_\allowbreak{}size\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{chapter5\_\allowbreak{}enforcement\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{partition\_\allowbreak{}grid\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{rho\_\allowbreak{}spacing\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{rho\_\allowbreak{}scan\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{gst\_\allowbreak{}jitter\_\allowbreak{}summary.\allowbreak{}csv}、\texttt{net\_\allowbreak{}asymmetry\_\allowbreak{}summary.\allowbreak{}csv})、分析与图表生成脚本均存档于
-\texttt{stage9\_\allowbreak{}cross\_\allowbreak{}protocol\_\allowbreak{}calibration/\allowbreak{}} 与
-\texttt{stage7\_\allowbreak{}deployment/\allowbreak{}multivalidator/\allowbreak{}};两起数据完整性事件(P0-1 首轮
-\texttt{timeout.\allowbreak{}exe} 伪迹致 recFetch 误记为 0、P0-2 ρ 首轮 ρ
-近恒定的设计缺陷)的诚实记录与受污染数据存档见
-\texttt{stage9\_\allowbreak{}cross\_\allowbreak{}protocol\_\allowbreak{}calibration/\allowbreak{}EXPERIMENTAL\_\allowbreak{}COVERAGE.\allowbreak{}md}。
+7-7)、§7.5 非对称网络下 certified 臂鲁棒性(图 7-8),其编排脚本、逐 run
+汇总 CSV(\texttt{payload\_size\_summary.csv}、\texttt{chapter5\_enforcement\_summary.csv}、\texttt{partition\_grid\_summary.csv}、\texttt{rho\_spacing\_summary.csv}、\texttt{rho\_scan\_summary.csv}、\texttt{gst\_jitter\_summary.csv}、\texttt{net\_asymmetry\_summary.csv})、分析与图表生成脚本均存档于仓库
+\texttt{submit/\allowbreak{}calibration/\allowbreak{}} 与
+\texttt{submit/\allowbreak{}deployment/\allowbreak{}}。
+
+两起数据完整性事件(P0-1 首轮
+\texttt{timeout.exe} 伪迹致 recFetch 误记为 0、P0-2 $\rho$ 首轮 $\rho$
+近恒定的设计缺陷)的诚实记录与受污染数据存档见仓库
+\texttt{submit/\allowbreak{}calibration/\allowbreak{}EXPERIMENTAL\_\allowbreak{}COVERAGE.md}。
 
 \textbf{作者贡献(CRediT)}:概念化、方法论、形式化分析、写作------原稿与修订,均由论文作者完成。
 
