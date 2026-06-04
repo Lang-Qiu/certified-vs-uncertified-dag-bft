@@ -182,7 +182,3 @@ cat config/experiment_matrix.yaml
 # 分析结果
 python tools/summarize_runs.py
 ```
-
-## AI 使用声明
-
-本文的结构组织和实验脚本撰写使用了大语言模型辅助。研究论点、核心论证（包括第 6 章必要性论证与第 8 章深层轴的提出）与最终判断由作者负责并确认。全部参考文献经独立检索核验。
