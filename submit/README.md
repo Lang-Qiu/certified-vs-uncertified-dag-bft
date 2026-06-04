@@ -1,4 +1,4 @@
-# 论文提交材料包
+# 材料说明
 
 ## 论文信息
 
@@ -7,23 +7,24 @@
 - **页数**: 43 页
 - **参考文献**: 62 篇
 - **图表**: 13 张图
+- **Sui 版本**: MystenLabs/sui commit `62ee6ada`（2026-05-22，main 分支）
 
 ## 目录结构
 
 ```
-submit/
-├── README.md                    # 本文件
+submit/                                (26 MB, 2164 文件)
+├── README.md                          # 本文件
 │
-├── paper/                       # 论文文件
-│   ├── final_paper.pdf          # 最终 PDF（43 页）
-│   ├── final_paper.tex          # LaTeX 源文件
-│   ├── final_paper.docx         # Word 版本
-│   ├── final_paper.md           # Markdown 源文件
-│   ├── _paper_template.tex      # LaTeX 模板
-│   ├── _build_tex.py            # Markdown → TeX 转换脚本
-│   ├── _post_tex.py             # TeX 后处理脚本
-│   ├── _refine.py               # 内容精炼脚本
-│   └── figures/                 # 论文图片（13 张）
+├── paper/                             # 论文文件
+│   ├── final_paper.pdf                # 最终 PDF（43 页）
+│   ├── final_paper.tex                # LaTeX 源文件
+│   ├── final_paper.docx               # Word 版本
+│   ├── final_paper.md                 # Markdown 源文件
+│   ├── _paper_template.tex            # LaTeX 模板
+│   ├── _build_tex.py                  # Markdown → TeX 转换脚本
+│   ├── _post_tex.py                   # TeX 后处理脚本
+│   ├── _refine.py                     # 内容精炼脚本
+│   └── figures/                       # 论文图片（13 张）
 │       ├── figure_1_net_advantage.png/pdf
 │       ├── figure_2_advantage_region.png/pdf
 │       ├── figure_3_design_axis.png/pdf
@@ -39,84 +40,106 @@ submit/
 │       ├── figure_7_8_net_asymmetry.png
 │       └── make_figure_7_3.py
 │
-├── simulation/                  # SimPy 仿真代码（Stage 6）
-│   ├── README.md                # 仿真说明
-│   ├── run_skeleton.py          # 骨架仿真
-│   ├── run_queuing.py           # 排队论仿真
-│   ├── run_uncertified.py       # uncertified DAG 仿真
-│   ├── run_compare.py           # 对比仿真
-│   ├── run_equivocation.py      # 非等价性仿真
-│   ├── run_measure.py           # 测量仿真
-│   ├── run_sweep.py             # 参数扫描仿真
-│   ├── run_verify.py            # 验证仿真
-│   ├── run_calibrated_sweep.py  # 校准扫描仿真
-│   ├── core/                    # 核心模块
-│   │   ├── block.py             # 区块定义
-│   │   ├── config.py            # 配置
-│   │   ├── delay.py             # 延迟模型
-│   │   ├── network.py           # 网络模型
-│   │   ├── simulation.py        # 仿真引擎
-│   │   └── validator.py         # 验证者模型
-│   ├── adversary/               # 对手模型
-│   │   └── equivocation.py      # 非等价性攻击
-│   ├── variants/                # 协议变体
-│   │   ├── certified.py         # certified DAG
-│   │   └── uncertified.py       # uncertified DAG
-│   ├── metrics/                 # 指标收集
-│   │   ├── export.py            # 数据导出
-│   │   ├── figures.py           # 图表生成
-│   │   └── ledger.py            # 账本指标
-│   ├── experiments/             # 实验编排
-│   │   └── sweep.py             # 参数扫描
-│   └── data/                    # 仿真数据
-│       ├── cost_ledger_*.csv/json
-│       ├── sweep_*.csv/json
-│       ├── verification_*.json/md
-│       └── figures/             # 仿真图表
+├── simulation/                        # SimPy 仿真代码（Stage 6）
+│   ├── README.md                      # 仿真说明
+│   ├── run_skeleton.py                # 骨架仿真
+│   ├── run_queuing.py                 # 排队论仿真
+│   ├── run_uncertified.py             # uncertified DAG 仿真
+│   ├── run_compare.py                 # 对比仿真
+│   ├── run_equivocation.py            # 非等价性仿真
+│   ├── run_measure.py                 # 测量仿真
+│   ├── run_sweep.py                   # 参数扫描仿真
+│   ├── run_verify.py                  # 验证仿真
+│   ├── run_calibrated_sweep.py        # 校准扫描仿真
+│   ├── core/                          # 核心模块
+│   │   ├── block.py                   # 区块定义
+│   │   ├── config.py                  # 配置
+│   │   ├── delay.py                   # 延迟模型
+│   │   ├── network.py                 # 网络模型
+│   │   ├── simulation.py              # 仿真引擎
+│   │   └── validator.py               # 验证者模型
+│   ├── adversary/                     # 对手模型
+│   │   └── equivocation.py            # 非等价性攻击
+│   ├── variants/                      # 协议变体
+│   │   ├── certified.py               # certified DAG
+│   │   └── uncertified.py             # uncertified DAG
+│   ├── metrics/                       # 指标收集
+│   │   ├── export.py                  # 数据导出
+│   │   ├── figures.py                 # 图表生成
+│   │   └── ledger.py                  # 账本指标
+│   ├── experiments/                   # 实验编排
+│   │   └── sweep.py                   # 参数扫描
+│   └── data/                          # 仿真数据
+│       ├── cost_ledger_*.csv/json     # 成本账本
+│       ├── sweep_*.csv/json           # 参数扫描结果
+│       ├── verification_*.json/md     # 验证报告
+│       └── figures/                   # 仿真图表
 │
-├── deployment/                  # 真实部署实验（Stage 7）
-│   ├── scripts/                 # 顶层部署脚本
+├── deployment/                        # 真实部署实验（Stage 7）
+│   ├── README.md
+│   ├── reports/                       # 阶段性报告
+│   ├── scripts/                       # 顶层部署脚本
 │   │   ├── build_sui_image.ps1
 │   │   ├── check_prereqs.ps1
 │   │   ├── fetch_targets.ps1
 │   │   ├── inject_netem.sh
 │   │   ├── kill_validator.ps1
 │   │   └── run_local_testnet.ps1
-│   └── multivalidator/          # 多验证者实验
+│   └── multivalidator/                # 多验证者实验
 │       ├── README.md
 │       ├── handoff_persistent.md
-│       ├── scripts/             # 实验运行脚本（PS1/SH）
-│       ├── tools/               # 分析工具（Python）
-│       ├── compose/             # Docker Compose 配置
-│       ├── config/              # 实验矩阵配置（YAML）
-│       ├── tests/               # 测试用例
-│       ├── reports/             # 实验报告（~25 个 MD 文件）
-│       ├── figures/             # 部署实验图表
-│       ├── paper_integration_prep/  # 论文集成准备文档
-│       ├── data/
-│       │   ├── manifests/       # 环境快照与留存清单
-│       │   └── runs/            # 汇总 CSV（22 个摘要文件）
-│       └── ...
+│       ├── scripts/                   # 实验运行脚本（10 个 PS1/SH）
+│       ├── tools/                     # 分析工具（22 个 Python）
+│       ├── compose/                   # Docker Compose 配置（3 个 YAML）
+│       ├── config/                    # 实验矩阵配置（10 个 YAML）
+│       ├── tests/                     # 测试用例（7 个 Python）
+│       ├── reports/                   # 实验报告（~25 个 MD）
+│       ├── figures/                   # 部署实验图表（4 个 PNG）
+│       ├── paper_integration_prep/    # 论文集成准备（9 个 MD）
+│       └── data/
+│           ├── manifests/             # 环境快照与留存清单
+│           ├── runs/                  # 汇总 CSV（19 个摘要文件）
+│           └── per_run_metrics/       # 逐 run 指标（503 个目录）
+│               ├── <run_name>/
+│               │   ├── controller_record.json
+│               │   ├── manifest.json
+│               │   └── metrics/
+│               │       ├── consensus_metrics.csv
+│               │       ├── consensus_metrics.json
+│               │       └── consensus_metrics_true.json
+│               └── ...
 │
-├── calibration/                 # 跨协议校准实验（Stage 9）
-│   ├── *.md                     # 实验报告与结果文档（13 个）
-│   ├── scripts/                 # Python 分析脚本（11 个）+ PS1 扫描脚本（17 个）
-│   ├── figures/                 # 校准图表（15 PDF + 15 PNG + 3 PNG）
-│   ├── config/                  # 实验配置（YAML）
-│   └── docker/                  # Docker 构建文件
+├── calibration/                       # 跨协议校准实验（Stage 9）
+│   ├── *.md                           # 实验报告（13 个）
+│   ├── scripts/                       # Python 分析（11 个）+ PS1 扫描（17 个）
+│   ├── figures/                       # 校准图表（32 个 PDF/PNG）
+│   ├── config/                        # 实验配置（2 个 YAML）
+│   └── docker/                        # Docker 构建文件
 │
-├── model/                       # 形式化模型（Stage 2）
-│   └── dag_bft_model.py         # DAG-BFT 数学模型
+├── model/                             # 形式化模型（Stage 2）
+│   └── dag_bft_model.py               # DAG-BFT 数学模型
 │
-└── docs/                        # 关键文档
-    ├── integrity_report.md      # 完整性审查报告
-    ├── final_integrity_report.md
+└── docs/                              # 关键审查文档
+    ├── integrity_report.md            # 完整性审查
+    ├── final_integrity_report.md      # 最终完整性审查
     ├── round4_backfill_integrity_report.md
-    ├── editorial_decision.md    # 编辑决定
-    └── response_to_reviewers.md # 审稿回复
+    ├── editorial_decision.md          # 编辑决定
+    └── response_to_reviewers.md       # 审稿回复
 ```
 
 ## 关键数据文件说明
+
+### 逐 run 指标（submit/deployment/multivalidator/data/per_run_metrics/）
+
+503 个运行目录，每个包含：
+
+| 文件 | 说明 |
+|------|------|
+| `consensus_metrics.csv` | 该 run 的汇总指标（1 行）：checkpoint_interval、rpc_latency、recovery_time、availability_ratio 等 |
+| `consensus_metrics.json` | 同上，JSON 格式 |
+| `consensus_metrics_true.json` | 经验证的指标数据 |
+| `controller_record.json` | 实验控制器记录（故障注入时间线、容器状态） |
+| `manifest.json` | 实验配置快照（场景、种子、验证者数、故障参数） |
 
 ### 部署实验汇总 CSV（submit/deployment/multivalidator/data/runs/）
 
@@ -155,8 +178,8 @@ submit/
 ```bash
 cd paper/
 xelatex -interaction=nonstopmode final_paper.tex
-xelatex -interaction=nonstopmode final_paper.tex  # 第二遍修正交叉引用
-xelatex -interaction=nonstopmode final_paper.tex  # 第三遍稳定
+xelatex -interaction=nonstopmode final_paper.tex   # 第二遍修正交叉引用
+xelatex -interaction=nonstopmode final_paper.tex   # 第三遍稳定
 ```
 
 ## 仿真复现
@@ -171,7 +194,7 @@ python run_verify.py             # 运行验证
 
 ## 部署实验复现
 
-前提：Docker Desktop 运行中，Sui 镜像已构建。
+前提：Docker Desktop 运行中，Sui 镜像已构建（基于 commit `62ee6ada`）。
 
 ```bash
 cd deployment/multivalidator/
@@ -182,3 +205,18 @@ cat config/experiment_matrix.yaml
 # 分析结果
 python tools/summarize_runs.py
 ```
+
+## Sui 源码获取
+
+部署实验基于 MystenLabs/sui，commit `62ee6ada`（2026-05-22，main 分支）。
+vendor 源码未包含在本仓库中，可通过以下方式获取：
+
+```bash
+git clone https://github.com/MystenLabs/sui.git
+cd sui
+git checkout 62ee6ada
+```
+
+## AI 使用声明
+
+本文的结构组织和实验脚本撰写使用了大语言模型辅助。研究论点、核心论证（包括第 6 章必要性论证与第 8 章深层轴的提出）与最终判断由作者负责并确认。全部参考文献经独立检索核验。
