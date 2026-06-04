@@ -1,0 +1,20 @@
+schema_version: 1
+# Phase A pause smoke: force critical reconciliation so the Δ_recover knob fires.
+# docker pause validator-1 freezes it for the fault+workload window; on unpause it has missed
+# all rounds and MUST fetch them via the synchronizer -> process_fetched_blocks runs many times.
+# Run twice (RECOVER_MS=0 vs 1000); compare v1 "Synced N missing blocks" event counts + catch-up
+# progress in the post-unpause recovery window. With the knob on, each fetch sleeps 1000ms, so v1
+# catches up far slower (fewer Synced events / lower height) within the same window.
+defaults:
+  seed: 20260531
+  validators: 7
+  fault_tolerance: 2
+  epoch_duration_ms: 60000
+  repeats: 1
+scenarios:
+  - name: pause_v1_recover_probe
+    repeats: 1
+    faults:
+      - action: pause_container
+        target: validator-1
+        duration_seconds: 20

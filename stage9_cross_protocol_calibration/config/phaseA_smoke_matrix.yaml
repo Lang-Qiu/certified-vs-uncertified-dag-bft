@@ -1,0 +1,21 @@
+schema_version: 1
+# Phase A plumbing smoke (NOT a measurement): confirm the Δ_recover knob
+# (SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS) actually raises p95 cadence under a fault that
+# forces reconciliation fetches. One netem_loss fault on validator-1 drops its blocks, so
+# the other validators suspend blocks missing v1 ancestors and the synchronizer fetches them
+# -> process_fetched_blocks sleeps recovery_extra_delay_ms per fetch. Run this matrix twice
+# (RECOVER_MS=0 baseline, RECOVER_MS=250 knob-on) via run_phaseA_smoke.ps1.
+# Real Phase A calibration uses 3 seeds x 20 reps x the (rho, Delta_recover) grid.
+defaults:
+  seed: 20260530
+  validators: 7
+  fault_tolerance: 2
+  epoch_duration_ms: 60000
+  repeats: 1
+scenarios:
+  - name: loss5_v1_recover_probe
+    repeats: 1
+    faults:
+      - action: netem_loss
+        target: validator-1
+        loss_percent: 5

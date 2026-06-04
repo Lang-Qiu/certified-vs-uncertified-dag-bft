@@ -1,0 +1,49 @@
+# === Vendor 源码（可从 upstream 重新获取）===
+stage7_deployment/external/
+stage9_cross_protocol_calibration/sui-src/
+
+# === 逐 rep 运行目录（保留汇总 CSV）===
+stage7_deployment/multivalidator/data/runs/*/
+!stage7_deployment/multivalidator/data/runs/*.csv
+!stage7_deployment/multivalidator/data/runs/*.json
+
+# === 构建产物 ===
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# === Claude Code ===
+.claude/
+
+# === Docker 临时文件 ===
+.docker/
+*.tar
+*.tar.gz
+
+# === 编译产物（可从源码重新构建）===
+stage9_cross_protocol_calibration/docker/bin/
+stage7_deployment/docker/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === OS ===
+Thumbs.db
+Desktop.ini
+.DS_Store

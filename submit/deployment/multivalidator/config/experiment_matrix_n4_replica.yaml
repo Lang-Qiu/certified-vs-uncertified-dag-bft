@@ -1,0 +1,61 @@
+schema_version: 1
+defaults:
+  seed: 20260526
+  validators: 4
+  fault_tolerance: 1
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # Independent-seed replication of ALL n=4 cells (ablation + high-intensity).
+  # Original data used seed 20260525. This replicates with seed 20260526.
+  # Scenarios 1-4: the complete n=4 ablation additivity chain (2% loss).
+  # Scenarios 5-6: the high-intensity arm (5% loss).
+  # Script appends _seed<Seed>, so run_ids will be e.g. baseline_n4_seed20260526_rep01.
+
+  - name: baseline_n4
+    repeats: 10
+    faults: []
+
+  - name: delay_only_v1_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+
+  - name: loss_only_v2_n4
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 2
+
+  - name: two_validator_pressure_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 2
+
+  - name: loss_high_v2_n4
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5
+
+  - name: pressure_high_loss_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5

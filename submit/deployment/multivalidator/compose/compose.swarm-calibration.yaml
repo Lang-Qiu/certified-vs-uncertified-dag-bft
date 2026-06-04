@@ -1,0 +1,23 @@
+services:
+  sui-swarm-calibration:
+    image: stage7-sui:local
+    command:
+      - sui
+      - start
+      - --committee-size
+      - "7"
+      - --with-faucet=0.0.0.0:9123
+      - --force-regenesis
+      - --fullnode-rpc-port
+      - "9000"
+    environment:
+      EVIDENCE_ROLE: calibration_only
+      ELIGIBLE_FOR_PRIMARY_CLAIM: "false"
+      PRIMARY_EVIDENCE_LAYER: independent_containers
+    labels:
+      stage7.evidence_role: calibration_only
+      stage7.eligible_for_primary_claim: "false"
+      stage7.primary_evidence_layer: independent_containers
+    ports:
+      - "9000:9000"
+      - "9123:9123"

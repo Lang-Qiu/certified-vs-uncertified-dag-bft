@@ -1,0 +1,9 @@
+external/
+.cargo-cache/
+.rustup-cache/
+data/raw/
+data/tmp/
+*.log
+*.sqlite
+*.db
+target/

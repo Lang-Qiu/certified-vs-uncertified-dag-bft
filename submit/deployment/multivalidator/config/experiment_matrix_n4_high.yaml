@@ -1,0 +1,34 @@
+schema_version: 1
+defaults:
+  seed: 20260525
+  validators: 4
+  fault_tolerance: 1
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # Fill the "at/above f × high intensity" quadrant of the two-axis stability
+  # map (stress_test_combined_conclusion_20260525.md §2). At n=4 (f=1), both
+  # scenarios below have fault count ≥ f, and per-fault intensity is at the
+  # 5% loss level matched to Test 2 at n=7.
+  #
+  # loss_high_v2_n4   — single-validator 5% loss baseline at n=4
+  # pressure_high_loss_n4 — delay(v1) + 5% loss(v2) at n=4: the actual
+  #   "at/above f × high intensity" cell
+
+  - name: loss_high_v2_n4
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5
+
+  - name: pressure_high_loss_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5

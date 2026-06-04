@@ -1,0 +1,15 @@
+---
+keystore:
+  File: /mvdata/tmp/genesis-probe/sui.keystore
+external_keys: ~
+envs:
+  - alias: localnet
+    rpc: "http://127.0.0.1:9000"
+    ws: ~
+    basic_auth: ~
+  - alias: devnet
+    rpc: "https://fullnode.devnet.sui.io:443"
+    ws: ~
+    basic_auth: ~
+active_env: localnet
+active_address: "0xff54c23400aa7146a01babe193661fd1fa4d027a882d46471b917829e19f99e4"

@@ -1,0 +1,10 @@
+host_memory_gb: 16
+docker_memory_gb: 12
+validator_count: 7
+fault_tolerance_f: 2
+recommended_parallel_scenarios: 1
+validator_memory_limit: 1g
+support_services_memory_limit: 2g
+notes:
+  - "12GB Docker Desktop memory may be used for this experiment, but keep browser/IDE/background jobs low."
+  - "Run one experiment scenario at a time to preserve stability and measurement quality."

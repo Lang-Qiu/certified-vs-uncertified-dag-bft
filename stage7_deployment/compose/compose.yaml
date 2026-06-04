@@ -1,0 +1,25 @@
+services:
+  sui-local:
+    image: ${SUI_IMAGE:-stage7-sui:local}
+    build:
+      context: ../docker/sui
+      dockerfile: Dockerfile
+      args:
+        SUI_REF: ${SUI_REF:-62ee6ada958cd61b3c8a4466dd33c9aba3cdff8a}
+    container_name: stage7-sui-local
+    cap_add:
+      - NET_ADMIN
+    environment:
+      RUST_LOG: "off,sui_node=info,consensus=info"
+      EXPERIMENT_LABEL: ${EXPERIMENT_LABEL:-baseline_local_validator}
+    ports:
+      - "${FULLNODE_RPC_PORT:-9000}:9000"
+      - "${FAUCET_PORT:-9123}:9123"
+    volumes:
+      - ../data/raw:/work/data/raw
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -H 'Content-Type: application/json' --data '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"sui_getLatestCheckpointSequenceNumber\",\"params\":[]}' http://127.0.0.1:9000 | jq -e '.result != null' >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s

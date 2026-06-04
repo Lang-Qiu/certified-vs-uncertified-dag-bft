@@ -1,0 +1,73 @@
+x-validator-common: &validator-common
+  image: ${SUI_IMAGE:-stage7-sui:local}
+  restart: "no"
+  mem_limit: 1g
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - ../data:/mvdata
+  labels:
+    primary_evidence_layer: independent_containers
+    committee_size: "4"
+  environment:
+    - SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS=${SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS:-0}
+    - SUI_CONSENSUS_CERTIFICATE_GATE=${SUI_CONSENSUS_CERTIFICATE_GATE:-0}
+    - SUI_CONSENSUS_BLOCK_PADDING_BYTES=${SUI_CONSENSUS_BLOCK_PADDING_BYTES:-0}
+
+services:
+  validator-1:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-1
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.4.11-2000.yaml"
+    networks:
+      mv_net:
+        ipv4_address: 172.28.4.11
+
+  validator-2:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-2
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.4.12-2010.yaml"
+    networks:
+      mv_net:
+        ipv4_address: 172.28.4.12
+
+  validator-3:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-3
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.4.13-2020.yaml"
+    networks:
+      mv_net:
+        ipv4_address: 172.28.4.13
+
+  validator-4:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-4
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.4.14-2030.yaml"
+    networks:
+      mv_net:
+        ipv4_address: 172.28.4.14
+
+  fullnode:
+    image: ${SUI_IMAGE:-stage7-sui:local}
+    restart: "no"
+    container_name: ${RUN_ID:-stage7_mv}-fullnode
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/fullnode.yaml"
+    ports:
+      - "${FULLNODE_RPC_PORT:-9000}:9000"
+    volumes:
+      - ../data:/mvdata
+    labels:
+      primary_evidence_layer: independent_containers
+      committee_size: "4"
+    networks:
+      mv_net:
+        ipv4_address: 172.28.4.20
+
+networks:
+  mv_net:
+    name: ${RUN_ID:-stage7_mv}_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.4.0/24

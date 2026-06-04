@@ -1,0 +1,27 @@
+schema_version: 1
+defaults:
+  seed: 20260525
+  validators: 7
+  fault_tolerance: 2
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # Test 1 (same-validator stacking) re-run with the fault orchestrator fix.
+  # The original script called `tc qdisc replace` once per fault, so the
+  # second replace wiped the first qdisc — empirically delay_loss_same_v1
+  # collapsed onto loss_only_v1. The qdiscfix script groups netem faults by
+  # target and issues one combined `tc qdisc replace ... netem delay XXms
+  # YYms loss ZZ%` per target. This scenario re-runs the same logical
+  # configuration so we can compare against the canonical loss_only and
+  # delay_only baselines.
+
+  - name: delay_loss_same_v1_fixed
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-1
+        loss_percent: 2

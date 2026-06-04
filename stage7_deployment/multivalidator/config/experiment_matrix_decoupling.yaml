@@ -1,0 +1,23 @@
+schema_version: 1
+defaults:
+  seed: 20260524
+  validators: 7
+  fault_tolerance: 2
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # two_validator_pressure 的两个故障组件,分别单独注入,用于检验是否乘性效应。
+  # 配方与 two_validator_pressure (seed2026052406) 中的两个 fault 完全匹配。
+  - name: delay_only_v1_match
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+  - name: loss_only_v2_match
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 2

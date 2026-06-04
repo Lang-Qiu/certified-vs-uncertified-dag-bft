@@ -1,0 +1,129 @@
+x-validator-common: &validator-common
+  image: ${SUI_IMAGE:-stage7-sui:local}
+  restart: "no"
+  mem_limit: 1g
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - ../data:/mvdata
+  # stage9 cross-protocol calibration knobs, read at consensus start.
+  # Unset → 0 → stock behavior; the default stage7-sui:local image ignores these vars,
+  # so existing 290-rep reproductions are byte-identical. Only the stage9-sui-certgate
+  # image acts on them. Set the corresponding host env vars before `up`.
+  #   SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS  — Δ_recover knob (recovery-side liability).
+  #   SUI_CONSENSUS_CERTIFICATE_GATE         — Route A1 certified arm: gate parent-round
+  #                                            ancestor referencing on quorum-acceptance (Δ_save).
+  #   SUI_CONSENSUS_CERTIFICATE_PROBER_INTERVAL_MS — fast independent ack channel (RoundProber)
+  #                                            required by the gate; set the SAME value on the
+  #                                            cert-ON and cert-OFF arms so prober overhead cancels.
+  #   SUI_CONSENSUS_BLOCK_PADDING_BYTES       — P1-3 payload-size scan: zero-padded transaction
+  #                                            per proposed block. 0 → stock.
+  environment:
+    - SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS=${SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS:-0}
+    - SUI_CONSENSUS_CERTIFICATE_GATE=${SUI_CONSENSUS_CERTIFICATE_GATE:-0}
+    - SUI_CONSENSUS_CERTIFICATE_PROBER_INTERVAL_MS=${SUI_CONSENSUS_CERTIFICATE_PROBER_INTERVAL_MS:-0}
+    - SUI_CONSENSUS_BLOCK_PADDING_BYTES=${SUI_CONSENSUS_BLOCK_PADDING_BYTES:-0}
+  labels:
+    primary_evidence_layer: independent_containers
+
+services:
+  validator-1:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-1
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.11-2000.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.11
+
+  validator-2:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-2
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.12-2010.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.12
+
+  validator-3:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-3
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.13-2020.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.13
+
+  validator-4:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-4
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.14-2030.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.14
+
+  validator-5:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-5
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.15-2040.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.15
+
+  validator-6:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-6
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.16-2050.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.16
+
+  validator-7:
+    <<: *validator-common
+    container_name: ${RUN_ID:-stage7_mv}-validator-7
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/172.28.7.17-2060.yaml"
+    mem_limit: 1g
+    cap_add:
+      - NET_ADMIN
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.17
+
+  fullnode:
+    image: ${SUI_IMAGE:-stage7-sui:local}
+    restart: "no"
+    container_name: ${RUN_ID:-stage7_mv}-fullnode
+    command: "sui-node --config-path /mvdata/runs/${RUN_ID}/official-genesis/fullnode.yaml"
+    ports:
+      - "${FULLNODE_RPC_PORT:-9000}:9000"
+    volumes:
+      - ../data:/mvdata
+    labels:
+      primary_evidence_layer: independent_containers
+    networks:
+      mv_net:
+        ipv4_address: 172.28.7.20
+
+networks:
+  mv_net:
+    name: ${RUN_ID:-stage7_mv}_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.7.0/24

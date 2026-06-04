@@ -1,0 +1,21 @@
+# Thin runtime image: prebuilt sui + sui-node (built from modified source with stage9 knobs).
+# Used after the release build (docker run + cargo build, reusing the cargo cache volume) so we
+# don't recompile inside `docker build`. Context = this dir (docker/), must contain bin/sui + bin/sui-node.
+#
+# Runtime apt deps / CMD / ports MIRROR stage7 `docker/sui/Dockerfile` exactly → drop-in SUI_IMAGE
+# for the stage7 multivalidator compose. Knobs toggled per-container via env:
+#   SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS=<ms>   (Δ_recover knob; functional)
+#   SUI_CONSENSUS_CERTIFICATE_GATE=1             (cert-gate toggle; interface only)
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    iproute2 \
+    jq \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+COPY bin/sui /usr/local/bin/sui
+COPY bin/sui-node /usr/local/bin/sui-node
+WORKDIR /work
+EXPOSE 8080 8081 8082 8083 8084 9000 9123
+CMD ["sh", "-c", "mkdir -p /work/data/raw/sui-home /work/data/raw/checkpoints && HOME=/work/data/raw/sui-home exec sui start --with-faucet=0.0.0.0:9123 --force-regenesis --fullnode-rpc-port 9000 --data-ingestion-dir /work/data/raw/checkpoints"]

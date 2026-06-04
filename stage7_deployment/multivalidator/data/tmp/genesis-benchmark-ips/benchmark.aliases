@@ -1,0 +1,30 @@
+[
+  {
+    "alias": "objective-spinel",
+    "public_key_base64": "AD88JHrmoJnodUcnjoPStRrWuPuF/x1yZehJz3gqhx1w"
+  },
+  {
+    "alias": "jovial-coral",
+    "public_key_base64": "ACpoWZjuRJU6PrCl0xaTf4EKgL3MlSwKoHtNgrP+1FnC"
+  },
+  {
+    "alias": "optimistic-coral",
+    "public_key_base64": "AO4apJpEWd/oE6PPbriCBBIwx7JVhGnegfh8m/I78QoD"
+  },
+  {
+    "alias": "unruffled-euclase",
+    "public_key_base64": "AFbRGV8O64iAWQWQXna5ot1387nr5jtTaN7G8iL/U6Jr"
+  },
+  {
+    "alias": "inspiring-turquois",
+    "public_key_base64": "AAwinieoxp56/oaQDfvOq2720gdYLBJ6DZn+mz+1ogaK"
+  },
+  {
+    "alias": "admiring-diamond",
+    "public_key_base64": "AED0r7Q8kUu3MO4FDqOjGOmMu0ouZ9710Oh9cqpFC5c4"
+  },
+  {
+    "alias": "competent-garnet",
+    "public_key_base64": "AH9/3Ryo18PtggYTcXi0e8r+elTUoLTOW9niWXgYS0jO"
+  }
+]

@@ -1,0 +1,109 @@
+\documentclass[UTF8,fontset=windows,a4paper,11pt]{ctexart}
+
+% ---- page geometry ----
+\usepackage[margin=2.5cm]{geometry}
+
+% ---- math ----
+\usepackage{amsmath,amssymb}
+
+% ---- fonts: CJK via ctex windows fontset (宋体 SimSun / bold 黑体 SimHei /
+%      italic 楷体 KaiTi); Latin text stays Latin Modern (good Latin glyphs) ----
+\setmonofont{Consolas}
+
+% ---- graphics / captioned figure floats ----
+\usepackage{graphicx}
+% Paper carries manual, non-sequential labels (图 1, 图 4-1, 图 7-6) inside the
+% caption text, so strip the kernel "Figure N:" prefix. We redefine \@makecaption
+% directly rather than load the caption package, which conflicts with pandoc's
+% caption-less longtables ("No counter '' defined").
+\makeatletter
+\def\fps@figure{htbp}
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \begingroup\small
+    \sbox\@tempboxa{#2}%
+    \ifdim\wd\@tempboxa>\hsize #2\par
+    \else \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}\fi
+  \endgroup
+  \vskip\belowcaptionskip}
+\makeatother
+
+% ---- tables (pandoc longtable + booktabs) ----
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\providecommand{\real}[1]{#1}
+
+% ---- pandoc helper macros (replicated, since we use a custom template) ----
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi%
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+\makeatother
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setlength{\emergencystretch}{3em}
+
+% ---- paragraph style ----
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+
+% ---- section numbering off (paper carries manual 第X章 / X.Y numbers) ----
+\setcounter{secnumdepth}{-\maxdimen}
+\setcounter{tocdepth}{2}
+
+% ---- glyph mapping: render math symbols in math mode regardless of font ----
+\usepackage{newunicodechar}
+% circled digits -> SimSun (Latin font lmroman lacks U+2460..; \char avoids active-char recursion)
+\newfontfamily\cjkcircled{SimSun}[AutoFakeBold=3]
+\newunicodechar{①}{{\cjkcircled\char"2460}}
+\newunicodechar{②}{{\cjkcircled\char"2461}}
+\newunicodechar{③}{{\cjkcircled\char"2462}}
+% math symbols -> math mode (font-independent, correct typography)
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{′}{\ensuremath{\prime}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{₁}{\textsubscript{1}}
+\newunicodechar{₂}{\textsubscript{2}}
+
+% ---- hyperref ----
+\usepackage[unicode]{hyperref}
+\hypersetup{
+  pdftitle={$title$},
+  colorlinks=true, linkcolor={black}, urlcolor={blue!55!black}, citecolor={black},
+  pdfborder={0 0 0}}
+
+\title{$title$}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\bigskip
+
+$body$
+
+\end{document}

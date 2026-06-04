@@ -1,0 +1,43 @@
+schema_version: 1
+defaults:
+  seed: 20260525
+  validators: 4
+  fault_tolerance: 1
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # n=4 ablation. Physical fault parameters held identical to n=7 cells
+  # (delay 150±30 ms, loss 2%) so additivity comparisons across scales are
+  # direct. Note: BFT bound at n=4 is f=1; two_validator_pressure_n4 sits at
+  # the edge of the safety bound and is included intentionally to probe how
+  # the additivity story holds when the fault count meets/exceeds f.
+
+  - name: baseline_n4
+    repeats: 10
+    faults: []
+
+  - name: delay_only_v1_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+
+  - name: loss_only_v2_n4
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 2
+
+  - name: two_validator_pressure_n4
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 2

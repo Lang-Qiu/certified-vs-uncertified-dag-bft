@@ -1,0 +1,54 @@
+# Experiment image: Sui with stage9 edits (certificate_gate toggle + Δ_recover knob),
+# built from the LOCAL modified source (commit 62ee6ada + stage9 edits), NOT a fresh git clone.
+#
+# Build context = the modified sui-src checkout. Build (proxy via Clash 7897):
+#   docker build -f stage9_cross_protocol_calibration/docker/Dockerfile.certgate \
+#     -t stage9-sui-certgate:local \
+#     --build-arg http_proxy=http://host.docker.internal:7897 \
+#     --build-arg https_proxy=http://host.docker.internal:7897 \
+#     stage9_cross_protocol_calibration/sui-src
+#
+# Runtime CMD/ports/entry mirror stage7 `docker/sui/Dockerfile` exactly, so this image is a
+# drop-in `SUI_IMAGE` for the stage7 multivalidator compose — the only difference is the binary
+# carries the experiment knobs, toggled per-container via env:
+#   SUI_CONSENSUS_RECOVERY_EXTRA_DELAY_MS=<ms>   (Δ_recover knob; functional)
+#   SUI_CONSENSUS_CERTIFICATE_GATE=1             (cert-gate toggle; interface only, no logic yet)
+
+FROM rust:1.92-bookworm AS builder
+WORKDIR /src
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    clang \
+    cmake \
+    git \
+    libssl-dev \
+    llvm \
+    pkg-config \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the modified source (Cargo.lock unchanged — stage9 edits add no deps, so --locked holds).
+COPY . /src
+
+RUN cargo build --locked --release --bin sui -j 2
+RUN cargo build --locked --release --bin sui-node -j 2
+RUN mkdir -p /out && cp target/release/sui target/release/sui-node /out/
+
+FROM debian:bookworm-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    iproute2 \
+    jq \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /out/sui /usr/local/bin/sui
+COPY --from=builder /out/sui-node /usr/local/bin/sui-node
+
+WORKDIR /work
+EXPOSE 8080 8081 8082 8083 8084 9000 9123
+
+CMD ["sh", "-c", "mkdir -p /work/data/raw/sui-home /work/data/raw/checkpoints && HOME=/work/data/raw/sui-home exec sui start --with-faucet=0.0.0.0:9123 --force-regenesis --fullnode-rpc-port 9000 --data-ingestion-dir /work/data/raw/checkpoints"]

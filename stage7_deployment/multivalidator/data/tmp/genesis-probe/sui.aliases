@@ -1,0 +1,26 @@
+[
+  {
+    "alias": "inspiring-hematite",
+    "public_key_base64": "AD8oLrdZv4he8mXE4vS6FnaJc+LCgOGBBeEiPMnb+67u"
+  },
+  {
+    "alias": "friendly-phenacite",
+    "public_key_base64": "AHltsjSFvi3nhoObulqnLwmE1+qqDYz1N+JVdKPglZuc"
+  },
+  {
+    "alias": "blissful-opal",
+    "public_key_base64": "ACU8u6E9hOzyWoyW2KdLIzNnHP3vaJAOHM8vnfoivOG9"
+  },
+  {
+    "alias": "festive-sphene",
+    "public_key_base64": "ABH1XhCKiptJpWesnf3GASaAK/hh2xMc+M61H4Hq+/My"
+  },
+  {
+    "alias": "quirky-euclase",
+    "public_key_base64": "ABUMJ9AYXcg0u4TlkUjHzV741JaPUCbUHf44QMSOyu88"
+  },
+  {
+    "alias": "laughing-plasma",
+    "public_key_base64": "AAY0/8p4yr+twZcQe9NW+2cK9ZXWpfj0EBeey3dZbbCC"
+  }
+]

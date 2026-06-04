@@ -1,0 +1,49 @@
+schema_version: 1
+defaults:
+  seed: 20260525
+  validators: 7
+  fault_tolerance: 2
+  epoch_duration_ms: 60000
+  repeats: 10
+scenarios:
+  # ---- Test 1: same-validator stacking (delay + loss both on v1) ----
+  # Need loss_only_v1_match to pair with delay_only_v1_match for additivity baseline.
+  - name: loss_only_v1_match
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-1
+        loss_percent: 2
+
+  # Observed cell for same-validator additivity test.
+  - name: delay_loss_same_v1
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-1
+        loss_percent: 2
+
+  # ---- Test 2: higher-loss extreme (5% loss on v2, paired with delay on v1) ----
+  # Single-fault baseline for the high-loss case.
+  - name: loss_high_v2
+    repeats: 10
+    faults:
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5
+
+  # Observed cell for high-loss additivity test.
+  - name: pressure_high_loss
+    repeats: 10
+    faults:
+      - action: netem_delay
+        target: validator-1
+        delay_ms: 150
+        jitter_ms: 30
+      - action: netem_loss
+        target: validator-2
+        loss_percent: 5
